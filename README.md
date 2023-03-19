@@ -12,13 +12,13 @@ In this format, every cell can contain the values [1,numRows ∗ numCols], and t
 For example, in a 2x3 grid, the values [1,2*3] = [1,6] are allowed. Thus each row, column and grid must contain the values 1 through 6.
 
 - ### Data Structures
- - Linked Lists
- - 3D Sparse Table
+	 - Linked Lists
+	 - 3D Sparse Table
 
 - ### Iterative methods
- - Sole Candidate
- - Unique Candidate
- - Duplicate Cells
+	 - Sole Candidate
+	 - Unique Candidate
+	 - Duplicate Cells
 ________________________________________________________________________________________
 ## UML Diagrams And Functions
 
@@ -28,6 +28,7 @@ ________________________________________________________________________________
 #### Classes: Cell, Board and SudokuSolver
 <img alt="UML diagram and functions" src="">
 ________________________________________________________________________________________
+
 ### Requirements before running codes:
     - Install an IDE that compiles and runs Java codes. Recommendation VS Code
     - How to setup WSL Ubuntu terminal shell and run it from Visual Studio Code: 
@@ -52,6 +53,7 @@ ________________________________________________________________________________
     	- sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/oracle_jdk8/bin/javac 2000
     	- sudo echo "export J2SDKDIR=/usr/lib/jvm/oracle_jdk8 export J2REDIR=/usr/lib/jvm/oracle_jdk8/jre export PATH=$PATH:/usr/lib/jvm/oracle_jdk8/bin:/usr/lib/jvm/oracle_jdk8/db/bin:/usr/lib/jvm/oracle_jdk8/jre/bin export JAVA_HOME=/usr/lib/jvm/oracle_jdk8 export DERBY_HOME=/usr/lib/jvm/oracle_jdk8/db" | sudo tee -a /etc/profile.d/oraclejdk.sh
 _______________________________________________________________________________________
+
  ## Makefile
  ##### NB: A makefile Is Included to compile and run the codes on the terminal with the following commands:=
 - make clean
