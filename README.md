@@ -32,12 +32,12 @@ ________________________________________________________________________________
 
 ________________________________________________________________________________________
 
-### Requirements before running codes:
+## Requirements before running codes:
 - Install an IDE that compiles and runs Java codes. Recommendation VS Code
 - How to setup WSL Ubuntu terminal shell and run it from Visual Studio Code: 
  visit: https://www.youtube.com/watch?v=fp45HpZuhS8&t=112s
 - How to Install Java JDK 17 on Windows 11: https://www.youtube.com/watch?v=ykAhL1IoQUM&t=136s
-- ## Installing Oracle JDK on Windows subsystem for Linux.
+- #### Installing Oracle JDK on Windows subsystem for Linux.
 	- Run WSL as Administrator
 	- set -ex
 	- NB: Update links for other JDK Versions 
