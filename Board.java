@@ -186,18 +186,16 @@ public class Board {
         this.numRows = r;
         final int length_cell = this.numRows * this.numCols;
         this.cells = new Cell[length_cell*length_cell];
-        String temp_BoardString = boardString.replaceAll("\\s", "");
+        String[] cellValues = boardString.split(" ");
         int cellIndex = 0;
         for(int rowIndex = 0; rowIndex < length_cell; rowIndex++){
             for(int colIndex = 0; colIndex < length_cell; colIndex++){
-                String inp = "";
-                if(temp_BoardString.charAt(cellIndex) == '-'){
-                    inp = "-";
+                if(cellValues[cellIndex].contains("-") == false){
+                    this.cells[cellIndex] = new Cell(this.numRows, this.numCols, cellValues[cellIndex]);
                 }
                 else{
-                    inp = Character.toString(temp_BoardString.charAt(cellIndex));
+                    this.cells[cellIndex] = new Cell(this.numRows, this.numCols, "-");
                 }
-                this.cells[cellIndex] = new Cell(this.numRows, this.numCols, inp);
                 this.cells[cellIndex].c = colIndex;
                 this.cells[cellIndex].r = rowIndex;
                 cellIndex++;
@@ -229,7 +227,7 @@ public class Board {
 
     public void solve(){
         int counter = 0;
-        while(soleCandidate () || uniqueCandidate () || duplicateCells ()){
+        while(soleCandidate() || uniqueCandidate() || duplicateCells()){
             counter++;
         }
         System.out.println("Number of moves: " + counter);
@@ -334,7 +332,7 @@ public class Board {
         // * I FOLLOWED THE PROVIDED PSEUDOCODE FOR THIS METHOD
         final int length_cell = this.numRows * this.numCols;
         // * ROWS
-        for(int row_index = 0; row_index < length_cell; row_index++){
+        for(int row_index = 0; row_index < 1; row_index++){
             int counts[] = new int[length_cell];
             for(int index = 0; index < length_cell; index++){
                 counts[index] = 0;
@@ -352,7 +350,7 @@ public class Board {
             }
             for(int i = 0; i < length_cell; i++){
                 if(counts[i] == 1){
-                    rowPtr = this.rows[i];
+                    rowPtr = this.rows[row_index];
                     while(rowPtr != null){
                         if(rowPtr.possibleValues != null && rowPtr.possibleValues.contains(i + 1)){
                             rowPtr.setVal(i + 1);
@@ -383,7 +381,7 @@ public class Board {
             }
             for(int i = 0; i < length_cell; i++){
                 if(counts[i] == 1){
-                    colPtr = this.rows[i];
+                    colPtr = this.cols[col_index];
                     while(colPtr != null){
                         if(colPtr.possibleValues != null && colPtr.possibleValues.contains(i + 1)){
                             colPtr.setVal(i + 1);
@@ -414,7 +412,7 @@ public class Board {
             }
             for(int i = 0; i < length_cell; i++){
                 if(counts[i] == 1){
-                    blockPtr = this.rows[i];
+                    blockPtr = this.blocks[block_index];
                     while(blockPtr != null){
                         if(blockPtr.possibleValues != null && blockPtr.possibleValues.contains(i + 1)){
                             blockPtr.setVal(i + 1);
@@ -438,11 +436,11 @@ public class Board {
                 if(rowPtr.possibleValues != null && rowPtr.possibleValues.length == 2){
                     Cell secondPtr = rowPtr.right;
                     while(secondPtr != null){
-                        if(rowPtr.possibleValues.equals(secondPtr.possibleValues)){
+                        if(rowPtr.possibleValues.equals(secondPtr.possibleValues) == true){
                             Cell thirdPtr = this.rows[row_index];
                             boolean change = false;
                             while(thirdPtr != null){
-                                if(thirdPtr != secondPtr && thirdPtr != rowPtr && thirdPtr.possibleValues != null){
+                                if(thirdPtr.equals(secondPtr) == false && thirdPtr.equals(rowPtr) == false && thirdPtr.possibleValues != null){
                                     change = change || (thirdPtr.possibleValues.remove(rowPtr.possibleValues));
                                 }
                                 thirdPtr = thirdPtr.right;
@@ -464,11 +462,11 @@ public class Board {
                 if(colPtr.possibleValues != null && colPtr.possibleValues.length == 2){
                     Cell secondPtr = colPtr.below;
                     while(secondPtr != null){
-                        if(colPtr.possibleValues.equals(secondPtr.possibleValues)){
+                        if(colPtr.possibleValues.equals(secondPtr.possibleValues) == true){
                             Cell thirdPtr = this.cols[col_index];
                             boolean change = false;
                             while(thirdPtr != null){
-                                if(thirdPtr != secondPtr && thirdPtr != colPtr && thirdPtr.possibleValues != null){
+                                if(thirdPtr.equals(secondPtr) == false && thirdPtr.equals(colPtr) == false && thirdPtr.possibleValues != null){
                                     change = change || (thirdPtr.possibleValues.remove(colPtr.possibleValues));
                                 }
                                 thirdPtr = thirdPtr.below;
@@ -485,16 +483,16 @@ public class Board {
         }
         // * BLOCKS
         for(int block_index = 0; block_index < length_cell; block_index++){
-            Cell blockPtr = this.rows[block_index];
+            Cell blockPtr = this.blocks[block_index];
             while(blockPtr != null){
                 if(blockPtr.possibleValues != null && blockPtr.possibleValues.length == 2){
                     Cell secondPtr = blockPtr.block;
                     while(secondPtr != null){
-                        if(blockPtr.possibleValues.equals(secondPtr.possibleValues)){
-                            Cell thirdPtr = this.rows[block_index];
+                        if(blockPtr.possibleValues.equals(secondPtr.possibleValues) == true){
+                            Cell thirdPtr = this.blocks[block_index];
                             boolean change = false;
                             while(thirdPtr != null){
-                                if(thirdPtr != secondPtr && thirdPtr != blockPtr && thirdPtr.possibleValues != null){
+                                if(thirdPtr.equals(secondPtr) == false && thirdPtr.equals(blockPtr) == false && thirdPtr.possibleValues != null){
                                     change = change || (thirdPtr.possibleValues.remove(blockPtr.possibleValues));
                                 }
                                 thirdPtr = thirdPtr.block;
