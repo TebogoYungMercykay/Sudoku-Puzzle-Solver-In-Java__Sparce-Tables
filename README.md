@@ -20,13 +20,15 @@ For example, in a 2x3 grid, the values [1,2*3] = [1,6] are allowed. Thus each ro
 	 - Unique Candidate
 	 - Duplicate Cells
 ________________________________________________________________________________________
+## Board Linking
+<img alt="Board Linking" src="https://github.com/TebogoYungMercykay/Sudoku-Puzzle-In-Java__Sparce-Tables/blob/main/ReadMe%20Images/Board.png">
+
 ## UML Diagrams And Functions
+- #### Classes: Linked List and Node
+<img alt="UML Diagram: Linked List and Node" src="https://github.com/TebogoYungMercykay/Sudoku-Puzzle-In-Java__Sparce-Tables/blob/main/ReadMe%20Images/Image%201.png">
 
-#### Classes: Linked List and Node
-<img alt="UML diagram and functions" src="">
-
-#### Classes: Cell, Board and SudokuSolver
-<img alt="UML diagram and functions" src="">
+- #### Classes: Cell, Board and SudokuSolver
+<img alt="UML Diagram: Cell, Board and SudokuSolver" src="https://github.com/TebogoYungMercykay/Sudoku-Puzzle-In-Java__Sparce-Tables/blob/main/ReadMe%20Images/Image%202.png">
 
 ________________________________________________________________________________________
 
