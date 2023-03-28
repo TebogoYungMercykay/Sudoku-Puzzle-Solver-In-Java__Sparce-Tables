@@ -93,136 +93,126 @@ public class Board {
      * Don't change anything above this line
     */
 
-    public void setLinks(){
-        if(this.cells != null){
-            // * MSetting up variables
-            final int length_cell = this.numRows * this.numCols;
-            this.cols = new Cell[length_cell];
-            this.rows = new Cell[length_cell];
-            this.blocks = new Cell[length_cell];
-
-            // * System.out.println("Row Links Automation Algorithm");
-            for(int row_next = 0; row_next < (length_cell * length_cell); row_next += length_cell){
-                for(int current_head = 0; current_head < length_cell; current_head++){
-                    if((current_head + 1) < length_cell){
-                        this.cells[current_head + row_next].right = this.cells[current_head + row_next + 1];
+    public Board(int r, int c, String boardString) {
+        numRows = r;
+        numCols = c;
+        String[] temp_array = boardString.split(" ");
+        cells = new Cell[numRows * numCols * numRows * numCols];
+        for(int i = 0; i < numRows * numCols * numRows * numCols; i++) {
+            cells[i] = null;
+        }
+        int m = 0, x = 0, numRow = numRows - 1, v = 0;
+        for (int i = 0; i < numRows * numCols; i++) {
+            for (int j = 0; j < numRows * numCols; j++) {
+                if (m < temp_array.length) {
+                    int y = 1;
+                    if (temp_array[m].contains("-") == false) {
+                        cells[m] = new Cell(numRows, numCols, temp_array[m]);
                     }
                     else{
-                        this.cells[current_head + row_next].right = null;
+                        cells[m] = new Cell(numRows, numCols, "-");
                     }
                 }
-            }
-            // * System.out.println("Col Links Automation Algorithm");
-            for(int col_next = 0; col_next < length_cell; col_next++){
-                for(int current_head = 0; current_head < length_cell * length_cell; current_head += length_cell){
-                    if((current_head + col_next + length_cell) < (length_cell * length_cell)){
-                        this.cells[current_head + col_next].below = cells[current_head + col_next + length_cell];
-                    }
-                    else{
-                        this.cells[current_head + col_next].below = null;
-                    }
-                }
-            }
-            // * System.out.println("Block Links Automation Algorithm");
-            int change_row = 0;
-            boolean temp_next_block = false;
-            int temp_next_b = 0;
-            for(int current_head = 0; current_head < length_cell * length_cell; current_head += this.numCols){
-                int temp_current_head = current_head;
-                for(int temp_row = 0 ; temp_row < this.numRows; temp_row++, temp_current_head += this.numCols * (this.numRows - 1)){
-                    if(temp_next_block == true){
-                        this.cells[temp_next_b].block = this.cells[temp_current_head];
-                        temp_next_block = false;
-                    }
-                    for(int temp_col = 0; temp_col < this.numCols; temp_col++){
-                        if(temp_col == this.numCols - 1 && temp_row == this.numRows - 1){
-                            this.cells[temp_current_head].block = null;
-                        }
-                        else{
-                            if(temp_col == this.numCols - 1){
-                                temp_next_block = true;
-                                temp_next_b = temp_current_head;
-                            }
-                            else{
-                                this.cells[temp_current_head].block = this.cells[temp_current_head + 1];
-                            }
-                        }
-                        temp_current_head++;
-                    }
-                }
-                change_row += 1;
-                if(change_row == this.numRows){
-                    current_head += length_cell * (this.numRows - 1);
-                    change_row = 0;
-                }
-            }
-
-            // * Storing the Heads for each column, row and block.
-            int counter_var = 0;
-            change_row = 0;
-            for(int index = 0; index < length_cell; index++){
-                this.cols[counter_var] = this.cells[index];
-                counter_var++;
-            }
-            counter_var = 0;
-            for(int index = 0; index < length_cell * length_cell; index += length_cell){
-                this.rows[counter_var] = this.cells[index];
-                counter_var++;
-            }
-            counter_var = 0;
-            for(int index = 0; index < length_cell * length_cell; index += this.numCols){
-                this.blocks[counter_var] = this.cells[index];
-                counter_var++; change_row += 1;
-                if(change_row == this.numRows){
-                    index += length_cell * (this.numRows - 1);
-                    change_row = 0;
-                }
+                cells[m].r = i;
+                cells[m].c = j;
+                m++;
             }
         }
-    }
-
-    public Board(int r, int c, String boardString){
-        this.numCols = c;
-        this.numRows = r;
-        final int length_cell = this.numRows * this.numCols;
-        this.cells = new Cell[length_cell*length_cell];
-        String[] cellValues = boardString.split(" ");
-        int cellIndex = 0;
-        for(int rowIndex = 0; rowIndex < length_cell; rowIndex++){
-            for(int colIndex = 0; colIndex < length_cell; colIndex++){
-                if(cellValues[cellIndex].contains("-") == false){
-                    this.cells[cellIndex] = new Cell(this.numRows, this.numCols, cellValues[cellIndex]);
-                }
-                else{
-                    this.cells[cellIndex] = new Cell(this.numRows, this.numCols, "-");
-                }
-                this.cells[cellIndex].c = colIndex;
-                this.cells[cellIndex].r = rowIndex;
-                cellIndex++;
-            }
-        }
-        // * Setting the b-blocks member variable for the cells
-		int block_number = 0;
-        int change_row = 0;
-		for(int current_head = 0; current_head < length_cell * length_cell; current_head += this.numCols){
-            int temp_current_head = current_head;
-            for(int temp_row = 0 ; temp_row < this.numRows; temp_row++, temp_current_head += this.numCols * (this.numRows - 1)){
-    	        for(int temp_col = 0; temp_col < this.numCols; temp_col++){
-    	            this.cells[temp_current_head++].b = block_number;
+        m = 0;
+		for(int i = 0; i < numRows * numCols * numRows * numCols; i = i + numCols, v++) {
+            int i2 = i;
+            for(int j = 0 ; j < numRows; j++, i2 += numCols * numRow) {
+    	        for(int k = 0; k < numCols; k++) {
+    	            cells[i2].b = m;
+                    i2++;
     	        }
             }
-	        change_row += 1;
-	        if(change_row == this.numRows){
-                current_head += length_cell * (this.numRows - 1);
-    	        change_row = 0;
+	        if ((x + 1) == numRows) {
+                i = i + numRows * numCols * numRow;
+    	        x = 0;
 	        }
-            block_number++;
+            else{
+                x++;
+            }
+            m++;
 		}
         /*
             * 1. Initializing the rows, cols and blocks 1D arrays.
             * 2. Then setting the links for below, right and block.
         */
-        this.setLinks();
+        setLinks();
+    }
+
+    public void setLinks() {
+        boolean change = false;
+        int m = 0, v = numRows * numCols - 1, x = 0;
+        cols = new Cell[numRows * numCols];
+        rows = new Cell[numRows * numCols];
+        blocks = new Cell[numRows * numCols];
+        for(int i = 0; i < numRows * numCols; i++) {
+            cols[i] = null;
+            rows[i] = null;
+            blocks[i] = null;
+        }
+        m = 0;
+        for(int t = 0; t < numRows * numCols * numRows * numCols; t += numRows * numCols, m++) {
+            rows[m] = cells[t];
+            Cell cellPtr = rows[m];
+            for(int i = 0; i < numRows * numCols; i++) {
+                if (i < v) {
+                    cellPtr.right = cells[i + t + 1];
+                }
+                cellPtr = cellPtr.right;
+            }
+        }
+        m = 0;
+        for(int t = 0; t < numRows * numCols; t++) {
+            cols[m] = cells[m];
+            Cell cellPtr = cols[m];
+            for(int i = 0; i < numRows * numCols * numRows * numCols; i += numRows * numCols) {
+                if ((i + t + numRows * numCols) < (numRows * numCols * numRows * numCols)) {
+                    cellPtr.below = cells[i + t + numRows * numCols];
+                }
+                cellPtr = cellPtr.below;
+            }
+            m++;
+        }
+
+        m = 0;
+        int temp = 0;
+        for(int i = 0; i < numRows * numCols * numRows * numCols; i += numCols, temp++) {
+            blocks[temp] = cells[i];
+            int i2 = i;
+            int numCol = numCols - 1;
+            int numRow = numRows - 1;
+            for(int j = 0 ; j < numRows; j++, i2 += numCols * numRow) {
+                if (change == true) {
+                    cells[m].block = cells[i2];
+                    change = false;
+                }
+                for(int temp_col = 0; temp_col < numCols; temp_col++, i2++) {
+                    if (temp_col == numCol && j == numRow) {
+                        cells[i2].block = null;
+                    }
+                    else{
+                        if (temp_col == numCol) {
+                            change = true;
+                            m = i2;
+                        }
+                        else{
+                            cells[i2].block = cells[i2 + 1];
+                        }
+                    }
+                }
+            }
+            if ((x + 1) == numRows) {
+                i = i + numRows * numCols * numRow;
+    	        x = 0;
+	        }
+            else{
+                x++;
+            }
+        }
     }
 
     public void solve(){
