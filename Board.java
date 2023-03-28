@@ -233,55 +233,24 @@ public class Board {
         System.out.println("Number of moves: " + counter);
     }
 
-    public void fullProp(){
-        final int length_cell = this.numRows * this.numCols;
-        for(int cellIndex = 0; cellIndex < length_cell * length_cell; cellIndex++){
-            this.propCell(cells[cellIndex]);
+     public void fullProp() {
+        for (Cell c : cells) {
+            propCell(c);
         }
     }
 
-    public void propCell(Cell cell){
-        if(cell == null || cell.value == null || this.cells == null){
+    public void propCell(Cell cell) {
+        if (cell == null || cell.value == null) {
             return;
         }
-        else{
-            final int length_cell = this.numRows * this.numCols;
-            // * System.out.println("Row Propagate Automation Algorithm");
-            for(int row_index = 0; row_index < length_cell; row_index++){
-                if(row_index == cell.r){
-                    Cell cellPointer = this.rows[row_index];
-                    while(cellPointer != null){
-                        if(cellPointer.possibleValues != null){
-                            cellPointer.possibleValues.remove(cell.value);
-                        }
-                        cellPointer = cellPointer.right;
-                    }
-                }
-            }
-            // * System.out.println("Col Propagate Automation Algorithm");
-            for(int col_index = 0; col_index < length_cell; col_index++){
-                if(col_index == cell.c){
-                    Cell cellPointer = this.cols[col_index];
-                    while(cellPointer != null){
-                        if(cellPointer.possibleValues != null){
-                            cellPointer.possibleValues.remove(cell.value);
-                        }
-                        cellPointer = cellPointer.below;
-                    }
-                }
-            }
-            // * System.out.println("Block Propagate Automation Algorithm");
-            for(int block_number = 0; block_number < length_cell; block_number++){
-                if(block_number == cell.b){
-                    Cell cellPointer = this.blocks[block_number];
-                    while(cellPointer != null){
-                        if(cellPointer.possibleValues != null){
-                            cellPointer.possibleValues.remove(cell.value);
-                        }
-                        cellPointer = cellPointer.block;
-                    }
-                }
-            }
+        for (Cell r = rows[cell.r]; r != null; r = r.right) {
+            r.removeVal(cell.value);
+        }
+        for (Cell c = cols[cell.c]; c != null; c = c.below) {
+            c.removeVal(cell.value);
+        }
+        for (Cell b = blocks[cell.b]; b != null; b = b.block) {
+            b.removeVal(cell.value);
         }
     }
 
@@ -309,52 +278,43 @@ public class Board {
             -void setVal(int val);
     */
 
-    public boolean soleCandidate(){
-        // * I FOLLOWED THE PROVIDED PSEUDOCODE FOR THIS METHOD
-        final int length_cell = this.numRows * this.numCols;
-        for(int row_index = 0; row_index < length_cell; row_index++){
-            Cell cellPointer = this.rows[row_index];
-            while(cellPointer != null){
-                if(cellPointer.possibleValues != null && cellPointer.possibleValues.length == 1){
-                    Integer val = cellPointer.possibleValues.head.data;
-                    cellPointer.possibleValues.remove(val);
-                    cellPointer.setVal(val);
-                    this.propCell(cellPointer);
-                    return true;
-                }
-                cellPointer = cellPointer.right;
+    public boolean soleCandidate() {
+        for (Cell c : cells) {
+            if (c.possibleValues != null && c.possibleValues.length == 1) {
+                Node<Integer> value = c.possibleValues.head;
+                c.setVal(value.data);
+                propCell(c);
+                return true;
             }
         }
         return false;
     }
 
-    public boolean uniqueCandidate(){
-        // * I FOLLOWED THE PROVIDED PSEUDOCODE FOR THIS METHOD
-        final int length_cell = this.numRows * this.numCols;
-        // * ROWS
-        for(int row_index = 0; row_index < 1; row_index++){
-            int counts[] = new int[length_cell];
-            for(int index = 0; index < length_cell; index++){
-                counts[index] = 0;
+    public boolean uniqueCandidate() {
+	// * ROWS
+        for (Cell row : rows) {
+            int counts[] = new int[numRows * numCols];
+            for(int i = 0; i < numRows * numCols; i++) {
+                counts[i] = 0;
             }
-            Cell rowPtr = this.rows[row_index];
-            while(rowPtr != null){
-                if(rowPtr.possibleValues != null){
+            Cell rowPtr = row;
+            while(rowPtr != null) {
+                if (rowPtr.possibleValues != null) {
                     Node<Integer> nodePtr = rowPtr.possibleValues.head;
-                    while(nodePtr != null){
-                        counts[nodePtr.data - 1] = counts[nodePtr.data - 1] + 1;
+                    while(nodePtr != null) {
+                        counts[nodePtr.data - 1]++;
                         nodePtr = nodePtr.next;
                     }
                 }
                 rowPtr = rowPtr.right;
             }
-            for(int i = 0; i < length_cell; i++){
-                if(counts[i] == 1){
-                    rowPtr = this.rows[row_index];
-                    while(rowPtr != null){
-                        if(rowPtr.possibleValues != null && rowPtr.possibleValues.contains(i + 1)){
+            for(int i = 0; i < numRows * numCols; i++) {
+                if (counts[i] == 1) {
+                    rowPtr = row;
+                    while(rowPtr != null) {
+                        if (rowPtr.possibleValues != null && rowPtr.possibleValues.contains(i + 1)) {
                             rowPtr.setVal(i + 1);
-                            this.propCell(rowPtr);
+                            propCell(rowPtr);
                         }
                         rowPtr = rowPtr.right;
                     }
@@ -362,30 +322,30 @@ public class Board {
                 }
             }
         }
-        // * COLS
-        for(int col_index = 0; col_index < length_cell; col_index++){
-            int counts[] = new int[length_cell];
-            for(int index = 0; index < length_cell; index++){
-                counts[index] = 0;
+	// + COLS
+        for (Cell col : cols) {
+            int counts[] = new int[numRows * numCols];
+            for(int i = 0; i < numRows * numCols; i++) {
+                counts[i] = 0;
             }
-            Cell colPtr = this.cols[col_index];
-            while(colPtr != null){
-                if(colPtr.possibleValues != null){
+            Cell colPtr = col;
+            while(colPtr != null) {
+                if (colPtr.possibleValues != null) {
                     Node<Integer> nodePtr = colPtr.possibleValues.head;
-                    while(nodePtr != null){
-                        counts[nodePtr.data - 1] = counts[nodePtr.data - 1] + 1;
+                    while(nodePtr != null) {
+                        counts[nodePtr.data - 1]++;
                         nodePtr = nodePtr.next;
                     }
                 }
                 colPtr = colPtr.below;
             }
-            for(int i = 0; i < length_cell; i++){
-                if(counts[i] == 1){
-                    colPtr = this.cols[col_index];
-                    while(colPtr != null){
-                        if(colPtr.possibleValues != null && colPtr.possibleValues.contains(i + 1)){
+            for(int i = 0; i < numRows * numCols; i++) {
+                if (counts[i] == 1) {
+                    colPtr = col;
+                    while(colPtr != null) {
+                        if (colPtr.possibleValues != null && colPtr.possibleValues.contains(i + 1)) {
                             colPtr.setVal(i + 1);
-                            this.propCell(colPtr);
+                            propCell(colPtr);
                         }
                         colPtr = colPtr.below;
                     }
@@ -393,30 +353,30 @@ public class Board {
                 }
             }
         }
-        // * BLOCKS
-        for(int block_index = 0; block_index < length_cell; block_index++){
-            int counts[] = new int[length_cell];
-            for(int index = 0; index < length_cell; index++){
-                counts[index] = 0;
+	// * BLOCKS
+        for (Cell block : blocks) {
+            int counts[] = new int[numRows * numCols];
+            for(int i = 0; i < numRows * numCols; i++) {
+                counts[i] = 0;
             }
-            Cell blockPtr = this.blocks[block_index];
-            while(blockPtr != null){
-                if(blockPtr.possibleValues != null){
+            Cell blockPtr = block;
+            while(blockPtr != null) {
+                if (blockPtr.possibleValues != null) {
                     Node<Integer> nodePtr = blockPtr.possibleValues.head;
-                    while(nodePtr != null){
-                        counts[nodePtr.data - 1] = counts[nodePtr.data - 1] + 1;
+                    while(nodePtr != null) {
+                        counts[nodePtr.data - 1]++;
                         nodePtr = nodePtr.next;
                     }
                 }
                 blockPtr = blockPtr.block;
             }
-            for(int i = 0; i < length_cell; i++){
-                if(counts[i] == 1){
-                    blockPtr = this.blocks[block_index];
-                    while(blockPtr != null){
-                        if(blockPtr.possibleValues != null && blockPtr.possibleValues.contains(i + 1)){
+            for(int i = 0; i < numRows * numCols; i++) {
+                if (counts[i] == 1) {
+                    blockPtr = block;
+                    while(blockPtr != null) {
+                        if (blockPtr.possibleValues != null && blockPtr.possibleValues.contains(i + 1)) {
                             blockPtr.setVal(i + 1);
-                            this.propCell(blockPtr);
+                            propCell(blockPtr);
                         }
                         blockPtr = blockPtr.block;
                     }
@@ -427,25 +387,24 @@ public class Board {
         return false;
     }
 
-    public boolean duplicateCells(){
-        final int length_cell = this.numRows * this.numCols;
+    public boolean duplicateCells() {
         // * ROWS
-        for(int row_index = 0; row_index < length_cell; row_index++){
-            Cell rowPtr = this.rows[row_index];
-            while(rowPtr != null){
-                if(rowPtr.possibleValues != null && rowPtr.possibleValues.length == 2){
+    	for (Cell row : rows) {
+            Cell rowPtr = row;
+            while(rowPtr != null) {
+                if (rowPtr.possibleValues != null && rowPtr.possibleValues.length == 2) {
                     Cell secondPtr = rowPtr.right;
-                    while(secondPtr != null){
-                        if(rowPtr.possibleValues.equals(secondPtr.possibleValues) == true){
-                            Cell thirdPtr = this.rows[row_index];
+                    while(secondPtr != null) {
+                        if (rowPtr.possibleValues.equals(secondPtr.possibleValues) == true) {
+                            Cell thirdPtr = row;
                             boolean change = false;
-                            while(thirdPtr != null){
-                                if(thirdPtr.equals(secondPtr) == false && thirdPtr.equals(rowPtr) == false && thirdPtr.possibleValues != null){
+                            while(thirdPtr != null) {
+                                if (thirdPtr.equals(secondPtr) == false && thirdPtr.equals(rowPtr) == false && thirdPtr.possibleValues != null) {
                                     change = change || (thirdPtr.possibleValues.remove(rowPtr.possibleValues));
                                 }
                                 thirdPtr = thirdPtr.right;
                             }
-                            if(change == true){
+                            if (change == true) {
                                 return true;
                             }
                         }
@@ -455,23 +414,23 @@ public class Board {
                 rowPtr = rowPtr.right;
             }
         }
-        // * COLS
-        for(int col_index = 0; col_index < length_cell; col_index++){
-            Cell colPtr = this.cols[col_index];
-            while(colPtr != null){
-                if(colPtr.possibleValues != null && colPtr.possibleValues.length == 2){
+	// * COLS
+        for (Cell col : cols) {
+            Cell colPtr = col;
+            while(colPtr != null) {
+                if (colPtr.possibleValues != null && colPtr.possibleValues.length == 2) {
                     Cell secondPtr = colPtr.below;
-                    while(secondPtr != null){
-                        if(colPtr.possibleValues.equals(secondPtr.possibleValues) == true){
-                            Cell thirdPtr = this.cols[col_index];
+                    while(secondPtr != null) {
+                        if (colPtr.possibleValues.equals(secondPtr.possibleValues) == true) {
+                            Cell thirdPtr = col;
                             boolean change = false;
-                            while(thirdPtr != null){
-                                if(thirdPtr.equals(secondPtr) == false && thirdPtr.equals(colPtr) == false && thirdPtr.possibleValues != null){
+                            while(thirdPtr != null) {
+                                if (thirdPtr.equals(secondPtr) == false && thirdPtr.equals(colPtr) == false && thirdPtr.possibleValues != null) {
                                     change = change || (thirdPtr.possibleValues.remove(colPtr.possibleValues));
                                 }
                                 thirdPtr = thirdPtr.below;
                             }
-                            if(change == true){
+                            if (change == true) {
                                 return true;
                             }
                         }
@@ -481,23 +440,23 @@ public class Board {
                 colPtr = colPtr.below;
             }
         }
-        // * BLOCKS
-        for(int block_index = 0; block_index < length_cell; block_index++){
-            Cell blockPtr = this.blocks[block_index];
-            while(blockPtr != null){
-                if(blockPtr.possibleValues != null && blockPtr.possibleValues.length == 2){
+	// * BLOCKS
+        for (Cell block : blocks) {
+            Cell blockPtr = block;
+            while(blockPtr != null) {
+                if (blockPtr.possibleValues != null && blockPtr.possibleValues.length == 2) {
                     Cell secondPtr = blockPtr.block;
-                    while(secondPtr != null){
-                        if(blockPtr.possibleValues.equals(secondPtr.possibleValues) == true){
-                            Cell thirdPtr = this.blocks[block_index];
+                    while(secondPtr != null) {
+                        if (blockPtr.possibleValues.equals(secondPtr.possibleValues) == true) {
+                            Cell thirdPtr = block;
                             boolean change = false;
-                            while(thirdPtr != null){
-                                if(thirdPtr.equals(secondPtr) == false && thirdPtr.equals(blockPtr) == false && thirdPtr.possibleValues != null){
+                            while(thirdPtr != null) {
+                                if (thirdPtr.equals(secondPtr) == false && thirdPtr.equals(blockPtr) == false && thirdPtr.possibleValues != null) {
                                     change = change || (thirdPtr.possibleValues.remove(blockPtr.possibleValues));
                                 }
                                 thirdPtr = thirdPtr.block;
                             }
-                            if(change == true){
+                            if (change == true) {
                                 return true;
                             }
                         }
